@@ -31,11 +31,16 @@ public:
     }
 
     void postAppSpecialize(const AppSpecializeArgs *) override {
-        if (enable_hack) {
-            std::thread hack_thread(hack_prepare, game_data_dir, data, length);
-            hack_thread.detach();
-        }
+    if (enable_hack) {
+        std::thread([=](){
+            // 延迟 25 秒再执行 dump，避开易盾初始化
+            sleep(55);
+
+            hack_prepare(game_data_dir, data, length);
+        }).detach();
     }
+}
+
 
 private:
     Api *api;
